@@ -57,14 +57,14 @@
   </head>
   <body>
   <img src="logo.png" width="15%" height="15%" >
-    <div id='maincont'>
-	    <center>
+    <center>
+     <div id='maincont'>
       <div id="chatbox">
         <p class="botText"><span>Please try typing full sentences as I am still learning!</span></p>
         <p class="botText"><span>I am a chatbot. You can begin conversation by typing in a message and pressing enter.</span></p>
         <p class="botText"><span>Hi There! What is your name?</span></p>
       </div>
-		    </center>
+		    
       <div id="userInput">
         <input id="textInput" type="text" name="msg" placeholder="Message">
 		<br>
@@ -74,6 +74,7 @@
 <br>
         <input id="buttonInput" type="submit" value="Send">
       </div>
+	</center>
       <script>
         function getBotResponse() {
           var rawText = $("#textInput").val();

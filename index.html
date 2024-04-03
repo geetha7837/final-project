@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" />
+		<style type="text/css">
+			body{
+				font-family: verdana;
+				 width: 100%;
+				background-image: url(/static/bk.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  
+    			overflow-x: hidden;
+			}
+			.spinner{
+    width: 80px;
+    height: 80px;
+    
+    border: 2px solid #f3f3f3;
+    border-top:3px solid #f25a41;
+    border-radius: 100%;
+    
+    position: absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right: 0;
+    margin: auto;
+    
+    animation: spin 1s infinite linear;
+}
+			#result{
+				height: 180px;
+				background-color: white;
+				box-shadow: 0 0 10px 0 #bbb;
+				margin-bottom: 30px;
+				font-size: 14px;
+				line-height: 25px;
+			}
+			button-con {
+  position: relative;
+  border: 1px solid currentColor;
+  font-size: 1.1rem;
+  color: #4f93ce;
+  margin: 3rem 0;
+  padding: 0.75rem 3rem;
+  cursor: pointer;
+  -webkit-transition: background-color 0.28s ease, color 0.28s ease, box-shadow 0.28s ease;
+  transition: background-color 0.28s ease, color 0.28s ease, box-shadow 0.28s ease;
+  overflow: hidden;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+		</style>
+
+  </head>
+  <body>
+  <img src="/static/logo.png" width="100%" height="330" >
+    <div id='maincont'>
+      <div id="chatbox">
+        <p class="botText"><span>Please try typing full sentences as I am still learning!</span></p>
+        <p class="botText"><span>I am a chatbot. You can begin conversation by typing in a message and pressing enter.</span></p>
+        <p class="botText"><span>Hi There! What is your name?</span></p>
+      </div>
+      <div id="userInput">
+        <input id="textInput" type="text" name="msg" placeholder="Message">
+		<br>
+		<button type = "button" style="position:absolute; left:48%;" onclick="startConverting();"><i class="fa fa-microphone"></i></button>
+		<!-- click this button to stop converting-->
+		<button type = "button" style="position:absolute; left:51%;" onclick="stopConverting();"><i class="fa fa-remove"></i></button>
+<br>
+        <input id="buttonInput" type="submit" value="Send">
+      </div>
+      <script>
+        function getBotResponse() {
+          var rawText = $("#textInput").val();
+          var userHtml = '<p class="userText"><span>' + rawText + '</span></p>';
+          $("#textInput").val("");
+          $("#chatbox").append(userHtml);
+          document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
+          $.get("/get", { msg: rawText }).done(function(data) {
+            var botHtml = '<p class="botText"><span>' + data + '</span></p>';
+            $("#chatbox").append(botHtml);
+            document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
+          });
+        }
+        $("#textInput").keypress(function(e) {
+            if(e.which == 13) {
+                getBotResponse();
+            }
+        });
+        $("#buttonInput").click(function() {
+          getBotResponse();
+        })
+		
+		
+		
+		function ClearFields() {
+
+     document.getElementById("textInput").value = "";
+}
+      </script>
+	  
+	  <script type="text/javascript">
+		
+		var overlay = document.getElementById("overlay");
+		
+		
+			var r = document.getElementById('textInput');
+			var speechRecognizer = new webkitSpeechRecognition();// a new speech recognition object
+			
+			//function to start listening to voice and then convert it to text
+			function startConverting () {
+				if('webkitSpeechRecognition' in window){
+					
+					speechRecognizer.continuous = true;
+					speechRecognizer.interimResults = true;
+					speechRecognizer.lang = 'en-IN';
+					speechRecognizer.start();
+					var finalTranscripts = '';
+					speechRecognizer.onresult = function(event){
+						var interimTranscripts = '';
+						for(var i = event.resultIndex; i < event.results.length; i++){
+							var transcript = event.results[i][0].transcript;
+							transcript.replace("\n", "<br>");
+							if(event.results[i].isFinal){
+								finalTranscripts += transcript;
+							}else{
+								interimTranscripts += transcript;
+							}
+						}
+						r.value = finalTranscripts + interimTranscripts ;
+					};
+					speechRecognizer.onerror = function (event) {
+					};
+				}else{
+					r.innerHTML = 'No browser support. Please upgrade your browser';
+				}
+			}
+			//function to stop listening
+			function stopConverting()
+			{
+				speechRecognizer.stop();
+				 document.getElementById('textInput').value = '';
+			}
+		
+		</script>
+    </div>
+  </body>
+</html>
